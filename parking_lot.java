@@ -7,12 +7,11 @@ class ParkingLot{
 	List<ParkingSpace> spaces;
 	List<ParkingSpace> filledSpaces;
 
-	boolean ParkingLot(long cap){ //intitalizer constructor
+	ParkingLot(long cap){ //intitalizer constructor
 		capacity = cap; 
 		spaces = new ArrayList<>(capacity);
 		createSpaces();
 		filledSpaces = new ArrayList<>(capacity); //maximum would be capacity
-		return true;
 	}
 
 	private void createSpaces(){
@@ -54,6 +53,11 @@ class ParkingLot{
 class Vehicle{
 	private String color;
 	private String reg_no;
+
+	Vehicle(String col, String reg){
+		color = col;
+		reg_no = reg;
+	}
 }
 
 // properties of the each parking space
@@ -83,6 +87,37 @@ class ParkingSpace{
 
 	public int getSpaceNumber(){
 		return this.spaceNumber;
+	}
+}
+
+
+public class parking_lot{
+	public static void main(String args[]){
+		Scanner sc = new Scanner(System.in);
+		Stirng keyword = sc.nextLine();
+		String cap = sc.nextLong();
+
+		ParkingLot lotObj = new ParkingLot(cap); //create the lot with specified capacity
+
+		while(true){
+			String keyword = sc.nextLine();
+
+			switch(keyword){
+				case "park":
+							String reg_no = sc.nextLine(); 
+							String color = sc.nextLine();
+							Vehicle veh = new Vehicle(color, reg_no);
+							lotObj.park(veh);
+							break;
+							
+				case "leave": break;
+				case "status": break;
+				//case "registration_numbers_for_cars_with_colour":
+				//case "slot_numbers_for_cars_with_colour":
+				//case "slot_number_for_registration_number":
+			}
+		}
+
 	}
 }
 
