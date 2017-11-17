@@ -35,7 +35,7 @@ class ParkingLot{
 	}
 
 
-	private closestFreeSpace(List<ParkingSpace> spaces){
+	private ParkingSpace closestFreeSpace(List<ParkingSpace> spaces){
 		Iterator<ParkingSpace> it = spaces.iterator();
         boolean spaceFound = false;
         Space emptySpace = null;
@@ -121,7 +121,14 @@ public class parking_lot{
 							System.out.println("Slot   number   "+spaceNumber+"   is   free");
 							break;
 
-				case "status": break;
+				case "status": 
+							System.out.println("Slot No\tRegistration No.\tColour");
+							for(Map.Entry<Long,ParkingSpace> entry : filledSpaces.entrySet()){
+								long key = entry.getKey();
+								ParkingSpace value = entry.getValue();
+								System.out.println(key+"\t"+value.vehicle.reg_no+"\t"+value.vehicle.color);
+							}
+							break;
 				//case "registration_numbers_for_cars_with_colour":
 				//case "slot_numbers_for_cars_with_colour":
 				//case "slot_number_for_registration_number":
