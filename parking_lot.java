@@ -5,13 +5,13 @@ import java.util.*;
 class ParkingLot{
 	long capacity;
 	List<ParkingSpace> spaces;
-	List<ParkingSpace> filledSpaces;
+	Map<Long,ParkingSpace> filledSpaces;
 
 	ParkingLot(long cap){ //intitalizer constructor
 		capacity = cap; 
 		spaces = new ArrayList<>(capacity);
 		createSpaces();
-		filledSpaces = new ArrayList<>(capacity); //maximum would be capacity
+		filledSpaces = new HashMap<>; 
 	}
 
 	private void createSpaces(){
@@ -21,16 +21,16 @@ class ParkingLot{
 	}
 
 
-	public void park(Vehicle v){
+	public long park(Vehicle v){
 		ParkingSpace space;
 		space = closestFreeSpace();
 		if (space != null){
 			space.park(v);
-			filledSpaces.add(space);
-			return true;
+			filledSpaces.put(space.spaceNumber,space);
+			return space.spaceNumber;
 		}
 		else{
-			return false;
+			return -1;
 		}
 	}
 
@@ -107,10 +107,20 @@ public class parking_lot{
 							String reg_no = sc.nextLine(); 
 							String color = sc.nextLine();
 							Vehicle veh = new Vehicle(color, reg_no);
-							lotObj.park(veh);
+							long parkNumber = lotObj.park(veh);
+							if(parkNumber == -1)
+								System.out.println("Sorry,   parking   lot   is   full");
+							else
+								System.out.println("Allocated   slot   number: "+parkNumber)
 							break;
-							
-				case "leave": break;
+
+				case "leave": 
+							String spaceNumber = sc.nextInt(); 
+							filledSpaces.get(spaceNumber).freeSpace();
+							filledSpaces.remove(spaceNumber);
+							System.out.println("Slot   number   "+spaceNumber+"   is   free");
+							break;
+
 				case "status": break;
 				//case "registration_numbers_for_cars_with_colour":
 				//case "slot_numbers_for_cars_with_colour":
