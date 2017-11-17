@@ -129,9 +129,45 @@ public class parking_lot{
 								System.out.println(key+"\t"+value.vehicle.reg_no+"\t"+value.vehicle.color);
 							}
 							break;
-				//case "registration_numbers_for_cars_with_colour":
-				//case "slot_numbers_for_cars_with_colour":
-				//case "slot_number_for_registration_number":
+
+				case "registration_numbers_for_cars_with_colour": 
+							String reqColor = sc.nextLine(); 
+							for(Map.Entry<Long,ParkingSpace> entry : filledSpaces.entrySet()){
+								long key = entry.getKey();
+								ParkingSpace value = entry.getValue();
+								if (value.vehicle.color == reqColor)
+									System.out.print(value.vehicle.reg_no + "\t");
+							}
+							break;
+
+				case "slot_numbers_for_cars_with_colour":
+							String reqColor = sc.nextLine(); 
+							for(Map.Entry<Long,ParkingSpace> entry : filledSpaces.entrySet()){
+								long key = entry.getKey();
+								ParkingSpace value = entry.getValue();
+								if (value.vehicle.color == reqColor)
+									System.out.print(key + "\t");
+							}
+							break;
+
+				case "slot_number_for_registration_number":
+							String reqRegNo = sc.nextLine();
+							long slot = -1;
+							for(Map.Entry<Long,ParkingSpace> entry : filledSpaces.entrySet()){
+								long key = entry.getKey();
+								ParkingSpace value = entry.getValue();
+								if (value.vehicle.reg_no == reqRegNo){
+									slot = key;
+									break;
+								}
+							} 
+							if (slot == -1){
+								System.out.println("Not found");
+							}
+							else{
+								System.out.println(slot);
+							}
+							break;
 			}
 		}
 
