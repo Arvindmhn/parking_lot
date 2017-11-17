@@ -3,11 +3,21 @@ import java.util.*;
 
 // properties of the parking lot
 class ParkingLot{
-	int capacity;
+	long capacity;
+	List<ParkingSpace> spaces;
+	Map<Long,ParkingSpace> filledSpaces;
 
-	boolean ParkingLot(int cap){ //intitalizer constructor
-		private capacity = cap; 
+	boolean ParkingLot(long cap){ //intitalizer constructor
+		capacity = cap; 
+		spaces = new ArrayList<>(capacity);
+		createSpaces();
 		return true;
+	}
+
+	private void createSpaces(){
+		for(i = 0 ; i < capacity; i++){
+			spaces.add(new ParkingSpace(i + 1));
+		}
 	}
 }
 
@@ -42,4 +52,7 @@ class ParkingSpace{
 		return this.slotNumber;
 	}
 }
+
+
+
 
