@@ -96,80 +96,87 @@ class ParkingSpace{
 public class parking_lot{
 	public static void main(String args[]){
 		Scanner sc = new Scanner(System.in);
-		String dummy_keyword = sc.nextLine();
-		long cap = sc.nextLong();
+		String[] create_keyword = sc.nextLine().split(" ");
+		if (create_keyword[0].equals("create_parking_lot")){
+			long cap = Long.parseLong(create_keyword[1]);
+			ParkingLot lotObj = new ParkingLot(cap); //create the lot with specified capacity
 
-		ParkingLot lotObj = new ParkingLot(cap); //create the lot with specified capacity
+			while(true){
+				String line = sc.nextLine();
+				String[] words = line.split(" ");
+				System.out.println(words[0]);
+				switch(words[0]){
+					case "park":
+								String reg_no = words[1];
+								String color = words[2];
+								Vehicle veh = new Vehicle(color, reg_no);
+								lotObj.park(veh);
+								break;
 
-		while(true){
-			String line = sc.nextLine();
-			String[] words = line.split(" ");
-			System.out.println(words[0]);
-			switch(words[0]){
-				case "park":
-							String reg_no = words[1];
-							String color = words[2];
-							Vehicle veh = new Vehicle(color, reg_no);
-							lotObj.park(veh);
-							break;
+					case "leave": 
+								long spaceNumber = Long.parseLong(words[1]);
+								lotObj.filledSpaces.get(spaceNumber).freeSpace();
+								lotObj.filledSpaces.remove(spaceNumber);
+								System.out.println("Slot   number   "+spaceNumber+"   is   free");
+								break;
 
-				case "leave": 
-							long spaceNumber = Integer.parseInt(words[1]);
-							lotObj.filledSpaces.get(spaceNumber).freeSpace();
-							lotObj.filledSpaces.remove(spaceNumber);
-							System.out.println("Slot   number   "+spaceNumber+"   is   free");
-							break;
-
-				case "status": 
-							System.out.println("Slot No\tRegistration No.\tColour");
-							for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
-								long key = entry.getKey();
-								ParkingSpace value = entry.getValue();
-								System.out.println(key+"\t"+value.vehicle.reg_no+"\t"+value.vehicle.color);
-							}
-							break;
-
-				case "registration_numbers_for_cars_with_colour": 
-							String reqColor = words[1];
-							for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
-								long key = entry.getKey();
-								ParkingSpace value = entry.getValue();
-								if (value.vehicle.color == reqColor)
-									System.out.print(value.vehicle.reg_no + "\t");
-							}
-							break;
-
-				case "slot_numbers_for_cars_with_colour":
-							reqColor = words[1];
-							for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
-								long key = entry.getKey();
-								ParkingSpace value = entry.getValue();
-								if (value.vehicle.color == reqColor)
-									System.out.print(key + "\t");
-							}
-							break;
-
-				case "slot_number_for_registration_number":
-							String reqRegNo = words[1];
-							long slot = -1;
-							for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
-								long key = entry.getKey();
-								ParkingSpace value = entry.getValue();
-								if (value.vehicle.reg_no == reqRegNo){
-									slot = key;
-									break;
+					case "status": 
+								System.out.println("Slot No\tRegistration No.\tColour");
+								for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
+									long key = entry.getKey();
+									ParkingSpace value = entry.getValue();
+									System.out.println(key+"\t"+value.vehicle.reg_no+"\t"+value.vehicle.color);
 								}
-							} 
-							if (slot == -1){
-								System.out.println("Not found");
-							}
-							else{
-								System.out.println(slot);
-							}
-							break;
+								break;
+
+					case "registration_numbers_for_cars_with_colour": 
+								String reqColor = words[1];
+								for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
+									long key = entry.getKey();
+									ParkingSpace value = entry.getValue();
+									if (value.vehicle.color == reqColor)
+										System.out.print(value.vehicle.reg_no + "\t");
+								}
+								break;
+
+					case "slot_numbers_for_cars_with_colour":
+								reqColor = words[1];
+								for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
+									long key = entry.getKey();
+									System.out.println(key + "\t");
+									ParkingSpace value = entry.getValue();
+									if (value.vehicle.color == reqColor)
+										System.out.print(key + "\t");
+								}
+								break;
+
+					case "slot_number_for_registration_number":
+								String reqRegNo = words[1];
+								long slot = -1;
+								for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
+									long key = entry.getKey();
+									ParkingSpace value = entry.getValue();
+									if (value.vehicle.reg_no == reqRegNo){
+										slot = key;
+										break;
+									}
+								} 
+								if (slot == -1){
+									System.out.println("Not found");
+								}
+								else{
+									System.out.println(slot);
+								}
+								break;
+
+					default : 	System.out.println("Invalid Input");
+								break;
+				}
 			}
 		}
-
+		else{
+			System.out.println("Create the lot first");
+		}
 	}
 }
 
