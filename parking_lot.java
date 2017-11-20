@@ -1,6 +1,6 @@
 import java.lang.*;
 import java.util.*;
-import java.lang.*;
+import java.io.*;
 
 // properties of the parking lot
 class ParkingLot{
@@ -13,11 +13,11 @@ class ParkingLot{
 		spaces = new ArrayList<>();
 		createSpaces();
 		filledSpaces = new HashMap<>(); 
-		System.out.println("ParkingLot created");
+		System.out.println("Created a parking lot with "+capacity+" slots");
 	}
 
 	void createSpaces(){
-		for(long i = 0 ; i < capacity; i++){
+		for(long i = 0; i < capacity; i++){
 			spaces.add(new ParkingSpace(i + 1));
 		}
 	}
@@ -26,7 +26,7 @@ class ParkingLot{
 	public void park(Vehicle v){
 		ParkingSpace space;
 		space = closestFreeSpace(spaces);
-		if (space != null){
+		if (space.isFree && space != null){
 			space.park(v);
 			filledSpaces.put(space.spaceNumber,space);
 			System.out.println("Allocated   slot   number: "+space.spaceNumber);
@@ -95,88 +95,168 @@ class ParkingSpace{
 
 public class parking_lot{
 	public static void main(String args[]){
+
 		Scanner sc = new Scanner(System.in);
-		String[] create_keyword = sc.nextLine().split(" ");
+		if (args.length > 0){
+			File file = new File(args[0]);
+			BufferedReader br = null;
+			if (file.exists()){
+				try {
+		            br = new BufferedReader( new FileReader(file));
+		            String tempLine = br.readLine();
+		            String create_keyword[] = tempLine.split(" ");
+		            System.out.println(create_keyword[1]);
+		            createLot(create_keyword, true, file);
+		        } 
+		        catch (FileNotFoundException e) {
+		            System.err.println("Unable to find the file");
+		        } 
+		        catch (IOException e) {
+		            System.err.println("Unable to read the file");
+		        }
+		    }
+		}
+		else{
+			String[] create_keyword = sc.nextLine().split(" ");
+			createLot(create_keyword, false, null);
+		}
+		
+		
+	}
+
+	public static void createLot(String[] create_keyword, boolean isFile, File file){
 		if (create_keyword[0].equals("create_parking_lot")){
 			long cap = Long.parseLong(create_keyword[1]);
 			ParkingLot lotObj = new ParkingLot(cap); //create the lot with specified capacity
-
-			while(true){
-				String line = sc.nextLine();
-				String[] words = line.split(" ");
-				System.out.println(words[0]);
-				switch(words[0]){
-					case "park":
-								String reg_no = words[1];
-								String color = words[2];
-								Vehicle veh = new Vehicle(color, reg_no);
-								lotObj.park(veh);
-								break;
-
-					case "leave": 
-								long spaceNumber = Long.parseLong(words[1]);
-								lotObj.filledSpaces.get(spaceNumber).freeSpace();
-								lotObj.filledSpaces.remove(spaceNumber);
-								System.out.println("Slot   number   "+spaceNumber+"   is   free");
-								break;
-
-					case "status": 
-								System.out.println("Slot No\tRegistration No.\tColour");
-								for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
-									long key = entry.getKey();
-									ParkingSpace value = entry.getValue();
-									System.out.println(key+"\t"+value.vehicle.reg_no+"\t"+value.vehicle.color);
-								}
-								break;
-
-					case "registration_numbers_for_cars_with_colour": 
-								String reqColor = words[1];
-								for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
-									long key = entry.getKey();
-									ParkingSpace value = entry.getValue();
-									if (value.vehicle.color == reqColor)
-										System.out.print(value.vehicle.reg_no + "\t");
-								}
-								break;
-
-					case "slot_numbers_for_cars_with_colour":
-								reqColor = words[1];
-								for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
-									long key = entry.getKey();
-									System.out.println(key + "\t");
-									ParkingSpace value = entry.getValue();
-									if (value.vehicle.color == reqColor)
-										System.out.print(key + "\t");
-								}
-								break;
-
-					case "slot_number_for_registration_number":
-								String reqRegNo = words[1];
-								long slot = -1;
-								for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
-									long key = entry.getKey();
-									ParkingSpace value = entry.getValue();
-									if (value.vehicle.reg_no == reqRegNo){
-										slot = key;
-										break;
-									}
-								} 
-								if (slot == -1){
-									System.out.println("Not found");
-								}
-								else{
-									System.out.println(slot);
-								}
-								break;
-
-					default : 	System.out.println("Invalid Input");
-								break;
-				}
-			}
+			if (isFile == true)  
+				processInput(lotObj, file);
+			else
+				processInput(lotObj, null);
 		}
 		else{
 			System.out.println("Create the lot first");
 		}
+	}
+
+	public static void processInput(ParkingLot lotObj, File file){
+		BufferedReader br = null;
+		if (file != null){
+			try{
+				br = new BufferedReader( new FileReader(file));
+				br.readLine(); // skip first line
+			}
+			catch(FileNotFoundException e){
+
+			}
+			catch(IOException e){
+
+			}
+		}
+			
+		while(true){
+
+				String line = "";
+				String words[] = {};
+
+				if (file != null){
+					try {
+						if((line = br.readLine()) != null){
+							words = line.split(" ");
+						}
+					}
+					catch(FileNotFoundException e){
+
+					}
+					catch(IOException e){
+
+					}	
+				}
+				else{
+					Scanner sc = new Scanner(System.in);
+					line = sc.nextLine();
+					words = line.split(" ");
+				}
+				try{
+					switch(words[0]){
+						case "park":
+									String reg_no = words[1];
+									String color = words[2];
+									Vehicle veh = new Vehicle(color, reg_no);
+									lotObj.park(veh);
+									break;
+
+						case "leave": 
+									long spaceNumber = Long.parseLong(words[1]);
+									lotObj.filledSpaces.get(spaceNumber).freeSpace();
+									lotObj.filledSpaces.remove(spaceNumber);
+									System.out.println("Slot   number   "+spaceNumber+"   is   free");
+									break;
+
+						case "status": 
+									System.out.println("Slot No\tRegistration No.\tColour");
+									for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
+										long key = entry.getKey();
+										ParkingSpace value = entry.getValue();
+										System.out.println(key+"\t"+value.vehicle.reg_no+"\t"+value.vehicle.color);
+									}
+									break;
+
+						case "registration_numbers_for_cars_with_colour": 
+									String reqColor = words[1];
+									int i = 0;
+									List<String> temparr = new ArrayList<>();
+									for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
+										long key = entry.getKey();
+										ParkingSpace value = entry.getValue();
+										if (value.vehicle.color.equals(reqColor))
+											temparr.add((String)value.vehicle.reg_no);
+									}
+									System.out.println(Arrays.toString(temparr.toArray()).replace("[","").replace("]",""));
+									break;
+
+						case "slot_numbers_for_cars_with_colour":
+									reqColor = ""; 
+									reqColor = words[1];
+									i = 0;
+									temparr = new ArrayList<>();
+									for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
+										long key = entry.getKey();
+										ParkingSpace value = entry.getValue();
+										if (value.vehicle.color.equals(reqColor)){
+											//System.out.print(key+ " ");
+											temparr.add(String.valueOf(key));
+										}
+									}
+									System.out.println(Arrays.toString(temparr.toArray()).replace("[","").replace("]",""));
+									break;
+
+						case "slot_number_for_registration_number":
+									String reqRegNo = words[1];
+									long slot = -1;
+									for(Map.Entry<Long,ParkingSpace> entry : lotObj.filledSpaces.entrySet()){
+										long key = entry.getKey();
+										ParkingSpace value = entry.getValue();
+										if (value.vehicle.reg_no.equals(reqRegNo)){
+											slot = key;
+											break;
+										}
+									} 
+									if (slot == -1){
+										System.out.println("Not found");
+									}
+									else{
+										System.out.println(slot);
+									}
+									break;
+
+						/*default : 	System.out.println("Invalid Input");
+									break;*/
+					}
+				}
+				catch(IndexOutOfBoundsException e){
+					//last line of File
+				}
+			}
 	}
 }
 
