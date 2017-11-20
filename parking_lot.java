@@ -256,6 +256,9 @@ public class parking_lot{
 				catch(IndexOutOfBoundsException e){
 					//last line of File
 				}
+				catch(NumberFormatException e){
+						//catch incorrect input
+				}
 			}
 	}
 }
